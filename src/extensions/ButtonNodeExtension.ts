@@ -1,6 +1,5 @@
-import './style/card.css';
-
-import { ComponentType, useCallback } from 'react';
+import { NodeViewComponentProps } from '@remirror/react';
+import { ComponentType } from 'react';
 import {
   command,
   CommandFunction,
@@ -8,36 +7,15 @@ import {
   ExtensionTag,
   NodeExtension,
   NodeExtensionSpec,
-  RemirrorJSON,
-} from '@remirror/core';
-import {
-  EditorComponent,
-  NodeViewComponentProps,
-  OnChangeJSON,
-  Remirror,
-  useCommands,
-  useRemirror,
-} from '@remirror/react';
+} from 'remirror';
+import Button from '../components/Button';
 
-class UserCardExtension extends NodeExtension {
+class ButtonNodeExtension extends NodeExtension {
   get name() {
     return 'userCard' as const;
   }
 
-  ReactComponent: ComponentType<NodeViewComponentProps> = ({ node }) => {
-    const { name } = node.attrs;
-
-    return (
-      <span
-        className="card"
-        onClick={() => console.log('btn clicked')}
-        contentEditable="false"
-        draggable="false"
-      >
-        {name}
-      </span>
-    );
-  };
+  ReactComponent: ComponentType<NodeViewComponentProps> = Button;
 
   createTags() {
     return [ExtensionTag.InlineNode];
@@ -105,50 +83,6 @@ class UserCardExtension extends NodeExtension {
       return true;
     };
   }
-
-  // createCommands() {
-  //   return {
-  //     appendButtonWithContent: this.appendButtonWithContent,
-  //   };
-  // }
 }
 
-const extensions = () => [
-  new UserCardExtension({ disableExtraAttributes: true }),
-];
-
-const VariableButton = () => {
-  const commands = useCommands();
-
-  const handleAddUserCard = () => {
-    commands.appendButtonWithContent({ name: 'test', id: 'test' });
-  };
-
-  return (
-    <button type="button" onClick={handleAddUserCard}>
-      Add variable
-    </button>
-  );
-};
-
-export const UserCard = () => {
-  const { manager, state } = useRemirror({
-    extensions,
-    stringHandler: 'html',
-  });
-
-  const handleEditorChange = useCallback((json: RemirrorJSON) => {
-    // Store the JSON in localstorage
-    // console.log(JSON.stringify(json, null, 2));
-  }, []);
-
-  return (
-    <div style={{ background: '#f9f9f9' }}>
-      <Remirror manager={manager} initialContent={state}>
-        <EditorComponent />
-        <VariableButton />
-        <OnChangeJSON onChange={handleEditorChange} />
-      </Remirror>
-    </div>
-  );
-};
+export { ButtonNodeExtension };
